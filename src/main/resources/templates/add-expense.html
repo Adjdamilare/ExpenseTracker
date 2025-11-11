@@ -36,12 +36,14 @@
                     </select>
                 </div>
 
-                <!-- Tag -->
-                <div class="mb-3">
-                    <label for="tag" class="form-label">Tag</label>
-                    <select class="form-select" id="tag" th:field="*{tag}">
-                        <option value="">-- Select a Tag (Optional) --</option>
-                        <option th:each="tag : ${tags}" th:value="${tag.id}" th:text="${tag.name}"></option>
+                <div class="form-group">
+                    <label for="tags">Tags</label>
+                    <select multiple class="form-control" id="tags" name="tagIds">
+                        <option th:each="tag : ${tags}"
+                                th:value="${tag.id}"
+                                th:text="${tag.name}">
+                            Tag Name
+                        </option>
                     </select>
                 </div>
 

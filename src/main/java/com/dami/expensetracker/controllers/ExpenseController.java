@@ -1,10 +1,11 @@
 package com.dami.expensetracker.controllers;
 
 import com.dami.expensetracker.models.Expens;
+import com.dami.expensetracker.models.Tag;
 import com.dami.expensetracker.models.User;
 import com.dami.expensetracker.services.ExpenseService;
 import com.dami.expensetracker.services.PaymentMethodService;
-import com.dami.expensetracker.services.TagService; // 1. Import TagService
+import com.dami.expensetracker.services.TagService;
 import com.dami.expensetracker.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,9 +14,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 public class ExpenseController {
@@ -23,29 +26,28 @@ public class ExpenseController {
     private final ExpenseService expenseService;
     private final UserService userService;
     private final PaymentMethodService paymentMethodService;
-    private final TagService tagService; // 2. Inject TagService
+    private final TagService tagService;
 
     @Autowired
-    public ExpenseController(ExpenseService expenseService, UserService userService, PaymentMethodService paymentMethodService, TagService tagService) { // 3. Add to constructor
+    public ExpenseController(ExpenseService expenseService, UserService userService, PaymentMethodService paymentMethodService, TagService tagService) {
         this.expenseService = expenseService;
         this.userService = userService;
         this.paymentMethodService = paymentMethodService;
-        this.tagService = tagService; // 4. Assign in constructor
+        this.tagService = tagService;
     }
 
     @GetMapping("/addExpense")
-    public String showAddExpenseForm(Model model, Principal principal) { // 5. Add Principal to get user
+    public String showAddExpenseForm(Model model, Principal principal) {
         Expens expense = new Expens();
         expense.setExpenseDate(LocalDate.now());
 
-        // Get current user to fetch their specific tags
         String username = principal.getName();
         User currentUser = userService.findByUsername(username)
                 .orElseThrow(() -> new IllegalStateException("Current user not found for fetching data"));
 
         model.addAttribute("expense", expense);
         model.addAttribute("paymentMethods", paymentMethodService.findAll());
-        model.addAttribute("tags", tagService.findByUser(currentUser)); // 6. Fetch and add user's tags to the model
+        model.addAttribute("tags", tagService.findByUser(currentUser));
 
         return "add-expense";
     }
@@ -53,6 +55,7 @@ public class ExpenseController {
     @PostMapping("/addExpense")
     public String addExpense(@ModelAttribute("expense") Expens expense,
                              BindingResult result,
+                             @RequestParam(name = "tagIds", required = false) List<Integer> tagIds, // Get tag IDs
                              Principal principal,
                              Model model) {
 
@@ -61,21 +64,25 @@ public class ExpenseController {
                 .orElseThrow(() -> new IllegalStateException("Current user not found"));
 
         if (result.hasErrors()) {
-            // Repopulate dynamic data if there are form errors
             model.addAttribute("paymentMethods", paymentMethodService.findAll());
             model.addAttribute("tags", tagService.findByUser(currentUser));
             return "add-expense";
         }
 
-        // Associate the new expense with the logged-in user
+        // Associate the expense with the logged-in user
         expense.setUser(currentUser);
 
-        // --- FIX: Set the creation timestamp ---
-        expense.setCreatedAt(java.time.Instant.now());
+        // Map the selected tags to the expense using the join entity
+        if (tagIds != null && !tagIds.isEmpty()) {
+            List<Tag> selectedTags = tagService.findAllByIds(tagIds);
+            for (Tag tag : selectedTags) {
+                expense.addTag(tag); // Use the helper method to create the link
+            }
+        }
 
+        // Save the expense. JPA will also save the associated ExpenseTag entities due to cascading.
         expenseService.save(expense);
 
-        // Redirect to a relevant page after saving
         return "redirect:/";
     }
 }

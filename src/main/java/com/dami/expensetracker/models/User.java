@@ -9,6 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Setter
@@ -57,4 +58,20 @@ public class User {
                 "id = " + id + ")";
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        // Compares users based on their ID. Assumes your ID field is named 'id'.
+        // If your ID field is Long, this will still work.
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        // Uses the ID for the hash code, consistent with the equals method.
+        return Objects.hash(id);
+    }
 }

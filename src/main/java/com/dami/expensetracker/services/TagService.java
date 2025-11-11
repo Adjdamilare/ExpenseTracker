@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TagService {
@@ -34,5 +35,17 @@ public class TagService {
      */
     public boolean existsByNameAndUser(String name, User user) {
         return tagRepository.existsByNameAndUser(name, user);
+    }
+
+    public List<Tag> findAllByIds(List<Integer> tagIds) {
+        // This method confirms your ID is likely an Integer
+        return tagRepository.findAllById(tagIds);
+    }
+
+    /**
+     * FIX: Changed the parameter type from Long to Integer to match the entity's ID.
+     */
+    public Optional<Tag> findById(Integer id) {
+        return tagRepository.findById(id);
     }
 }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Income</title>
+    <!-- Using Bootstrap for styling -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h2>Add New Income</h2>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/addIncome}" th:object="${income}" method="post">
+
+                <!-- Source (Required) -->
+                <div class="form-group">
+                    <label for="source">Source</label>
+                    <input type="text" id="source" th:field="*{source}" class="form-control" placeholder="e.g., Monthly Salary" required>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('source')}" th:errors="*{source}"></small>
+                </div>
+
+                <!-- Amount (Required) -->
+                <div class="form-group">
+                    <label for="amount">Amount</label>
+                    <input type="number" id="amount" th:field="*{amount}" class="form-control" placeholder="e.g., 1500.00" step="0.01" required>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></small>
+                </div>
+
+                <!-- Income Date (Required) -->
+                <div class="form-group">
+                    <label for="incomeDate">Date</label>
+                    <input type="date" id="incomeDate" th:field="*{incomeDate}" class="form-control" required>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('incomeDate')}" th:errors="*{incomeDate}"></small>
+                </div>
+
+                <!-- Notes (Optional) -->
+                <div class="form-group">
+                    <label for="notes">Notes (Optional)</label>
+                    <textarea id="notes" th:field="*{notes}" class="form-control" rows="3" placeholder="Add any extra details here..."></textarea>
+                </div>
+
+                <!-- CSRF Token (Crucial for security with Spring Security) -->
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                <button type="submit" class="btn btn-success">Save Income</button>
+                <a th:href="@{/}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -10,6 +10,8 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -17,7 +19,7 @@ import java.time.LocalDate;
 @Table(name = "expenses", schema = "expense_tracker")
 public class Expens {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // <-- BEST PRACTICE: Let the DB generate IDs
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "expense_id", nullable = false)
     private Integer id;
 
@@ -46,7 +48,9 @@ public class Expens {
 
     @PrePersist
     protected void onCreate() {
-        createdAt = Instant.now();
+        if (createdAt == null) {
+            createdAt = Instant.now();
+        }
     }
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -54,10 +58,22 @@ public class Expens {
     @JoinColumn(name = "method_id", nullable = false)
     private PaymentMethod method;
 
-    // --- FIX: ADD THIS RELATIONSHIP ---
-    // This allows an expense to have one tag and resolves the error.
-    // NOTE: This requires a 'tag_id' column in your 'expenses' database table.
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tag_id")
-    private Tag tag;
+    // --- REMOVED: The single tag relationship ---
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // @JoinColumn(name = "tag_id")
+    // private Tag tag;
+
+    // --- ADDED: The many-to-many relationship via ExpenseTag ---
+    @OneToMany(
+            mappedBy = "expense",
+            cascade = CascadeType.ALL, // This is key! It saves/updates/deletes ExpenseTags when an Expens is saved.
+            orphanRemoval = true
+    )
+    private Set<ExpenseTag> expenseTags = new HashSet<>();
+
+    // --- ADDED: Helper method for easily adding tags ---
+    public void addTag(Tag tag) {
+        ExpenseTag expenseTag = new ExpenseTag(this, tag);
+        this.expenseTags.add(expenseTag);
+    }
 }

@@ -26,4 +26,20 @@ public class ExpenseTag {
     @JoinColumn(name = "tag_id", nullable = false)
     private Tag tag;
 
+    public ExpenseTag() {
+        // --- FIX: Initialize the composite ID ---
+        this.id = new ExpenseTagId();
+    }
+
+    public ExpenseTag(Expens expense, Tag tag) {
+        // --- FIX: Initialize the composite ID object ---
+        this.id = new ExpenseTagId();
+
+        // Set the parent entities
+        this.expense = expense;
+        this.tag = tag;
+
+        // Now, JPA can use @MapsId to correctly populate the fields of 'this.id'
+        // from the IDs of 'this.expense' and 'this.tag' when the entity is persisted.
+    }
 }
