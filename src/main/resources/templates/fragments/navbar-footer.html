@@ -1,66 +1,47 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
-<head>
-    <title>Fragment</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
-</head><body>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
 
-<!-- Navigation Bar Fragment -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light" th:fragment="navbar">
+<!-- The th:fragment="navbar-footer" attribute is the key part here -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" th:fragment="navbar-footer">
     <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/}">Expense Tracker</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <a class="navbar-brand" th:href="@{/}">
+            <i class="fa-solid fa-wallet"></i>
+            Expense Tracker
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/}">Home</a>
+                    <a class="nav-link" th:href="@{/}">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/contact}">Contact</a>
+                    <a class="nav-link" th:href="@{/expenses}">Expenses</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/incomes}">Incomes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/budgets}">Budgets</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/tags}">Tags</a>
                 </li>
             </ul>
-
-            <!-- Authenticated User Links -->
-            <ul class="navbar-nav" sec:authorize="isAuthenticated()">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        Account
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" th:href="@{/profile}">Profile</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form th:action="@{/logout}" method="post">
-                                <button type="submit" class="dropdown-item text-danger">Logout</button>
-                            </form>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-
-            <!-- Unauthenticated User Links -->
-            <ul class="navbar-nav" sec:authorize="!isAuthenticated()">
+            <!-- You can add user-related links here, e.g., logout -->
+            <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/login}">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/register}">Register</a>
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="btn btn-dark">Logout</button>
+                    </form>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
-
-<!-- Footer Fragment -->
-<div th:fragment="footer">
-    <footer class="bg-light text-center py-4 mt-5">
-        <p class="mb-0">&copy; 2025 Dami. All rights reserved.</p>
-    </footer>
-</div>
 
 </body>
 </html>
