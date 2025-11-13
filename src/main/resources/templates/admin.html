@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .card-metric .card-body {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card-metric .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        .card-metric .metric-icon {
+            font-size: 3rem;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar-footer :: navbar}"></div>
+
+<div class="container-fluid mt-4 content-wrapper">
+    <h2 class="mb-4"><i class="fas fa-user-shield me-2"></i>Admin Dashboard</h2>
+
+    <!-- Key Metric Cards -->
+    <div class="row">
+        <div class="col-xl col-md-6 mb-4">
+            <div class="card card-metric bg-primary text-white shadow h-100">
+                <div class="card-body">
+                    <div>
+                        <div class="text-xs fw-bold text-uppercase mb-1">Total Users</div>
+                        <div class="metric-value" th:text="${totalUsers}">0</div>
+                    </div>
+                    <div class="metric-icon"><i class="fas fa-users"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl col-md-6 mb-4">
+            <div class="card card-metric bg-danger text-white shadow h-100">
+                <div class="card-body">
+                    <div>
+                        <div class="text-xs fw-bold text-uppercase mb-1">Total Expenses</div>
+                        <div class="metric-value" th:text="${#numbers.formatCurrency(totalPlatformExpenses)}">$0</div>
+                    </div>
+                    <div class="metric-icon"><i class="fas fa-wallet"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl col-md-6 mb-4">
+            <div class="card card-metric bg-success text-white shadow h-100">
+                <div class="card-body">
+                    <div>
+                        <div class="text-xs fw-bold text-uppercase mb-1">Total Income</div>
+                        <div class="metric-value" th:text="${#numbers.formatCurrency(totalPlatformIncome)}">$0</div>
+                    </div>
+                    <div class="metric-icon"><i class="fas fa-dollar-sign"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl col-md-6 mb-4">
+            <div class="card card-metric bg-info text-white shadow h-100">
+                <div class="card-body">
+                    <div>
+                        <div class="text-xs fw-bold text-uppercase mb-1">Total Budgets</div>
+                        <div class="metric-value" th:text="${totalBudgets}">0</div>
+                    </div>
+                    <div class="metric-icon"><i class="fas fa-bullseye"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl col-md-6 mb-4">
+            <div class="card card-metric bg-secondary text-white shadow h-100">
+                <div class="card-body">
+                    <div>
+                        <div class="text-xs fw-bold text-uppercase mb-1">Total Tags</div>
+                        <div class="metric-value" th:text="${totalTags}">0</div>
+                    </div>
+                    <div class="metric-icon"><i class="fas fa-tags"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Row -->
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+            <!-- All Users Table -->
+            <div class="card shadow mb-4">
+                <div class="card-header">All Registered Users</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="user : ${allUsers}">
+                                <td th:text="${user.id}">1</td>
+                                <td th:text="${user.username}">admin</td>
+                                <td th:text="${user.email}">admin@example.com</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Expenses Table -->
+            <div class="card shadow mb-4">
+                <div class="card-header">Recent Platform Expenses</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>User</th>
+                                <th>Amount</th>
+                                <th>Tags</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="expense : ${recentExpenses}">
+                                <td th:text="${#temporals.format(expense.expenseDate, 'dd-MMM-yy')}"></td>
+                                <td th:text="${expense.user.username}"></td>
+                                <td th:text="${#numbers.formatCurrency(expense.amount)}"></td>
+                                <td>
+                                    <span th:each="et : ${expense.expenseTags}" th:text="${et.tag.name}" class="badge bg-secondary me-1"></span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header">Top 5 Spending Users</div>
+                <div class="card-body">
+                    <canvas id="topSpendersChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/navbar-footer :: footer}"></div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    // --- Top Spending Users Chart (Bar Chart) ---
+    const topSpenderLabels = /*[[${topSpenderLabels}]]*/ [];
+    const topSpenderData = /*[[${topSpenderData}]]*/ [];
+    if (topSpenderLabels.length > 0) {
+        const topSpendersCtx = document.getElementById('topSpendersChart').getContext('2d');
+        new Chart(topSpendersCtx, {
+            type: 'bar',
+            data: {
+                labels: topSpenderLabels,
+                datasets: [{
+                    label: 'Total Spent',
+                    data: topSpenderData,
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y', // Horizontal bar chart
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    /*]]>*/
+</script>
+
+</body>
+</html>
