@@ -23,4 +23,5 @@ public interface BudgetRepository extends JpaRepository<Budget, Integer> {
     Optional<Budget> findCurrentBudget(@Param("currentDate") LocalDate currentDate);
 
 
+    List<Budget> findByUser(User currentUser);
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 public class TagController {
@@ -74,5 +75,22 @@ public class TagController {
 
         // Redirect back to the same page to show the newly added tag
         return "redirect:/addTags";
+    }
+
+    @GetMapping("/tags")
+    public String listTags(Model model, Principal principal) {
+        // 1. Get the username of the currently logged-in user
+        String username = principal.getName();
+        User currentUser = userService.findByUsername(username)
+                .orElseThrow(() -> new IllegalStateException("Current user not found: " + username));
+
+        // 2. Fetch all tags for that user using the TagService
+        List<Tag> userTags = tagService.findByUser(currentUser);
+
+        // 3. Add the list of tags to the model, making it available to Thymeleaf
+        model.addAttribute("tags", userTags);
+
+        // 4. Return the name of the view template
+        return "tags";
     }
 }

@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 
-<!-- The th:fragment="navbar-footer" attribute is the key part here -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark" th:fragment="navbar-footer">
+<!--/*
+    This is the navigation bar fragment.
+    It uses Spring Security to show different links based on
+    whether the user is authenticated or not.
+*/-->
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" th:href="@{/}">
-            <i class="fa-solid fa-wallet"></i>
-            Expense Tracker
+            <i class="fas fa-wallet"></i> Expense Tracker
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/}">Dashboard</a>
-                </li>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <!-- These links will ONLY show for authenticated users -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0" sec:authorize="isAuthenticated()">
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/expenses}">Expenses</a>
                 </li>
@@ -31,17 +32,49 @@
                     <a class="nav-link" th:href="@{/tags}">Tags</a>
                 </li>
             </ul>
-            <!-- You can add user-related links here, e.g., logout -->
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <form th:action="@{/logout}" method="post">
-                        <button type="submit" class="btn btn-dark">Logout</button>
-                    </form>
+
+            <!-- This section aligns to the right -->
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <!-- These links will ONLY show for anonymous (not logged in) users -->
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="nav-link" th:href="@{/login}">Login</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="btn btn-primary" th:href="@{/signup}">Sign Up</a>
+                </li>
+
+                <!-- This dropdown will ONLY show for authenticated users -->
+                <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle"></i>
+                        Welcome, <span sec:authentication="name">User</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li>
+                            <!-- Logout must be a POST request -->
+                            <form th:action="@{/logout}" method="post" class="d-inline">
+                                <button type="submit" class="dropdown-item">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
+
+<!--/*
+    This is the footer fragment.
+    It's displayed on all pages.
+*/-->
+<footer th:fragment="footer" class="footer mt-auto py-3 bg-light border-top">
+    <div class="container text-center">
+        <span class="text-muted">达明229037007 &copy;  2025 Expense Tracker. All Rights Reserved. | <a th:href="@{/contact}">Contact Us</a></span>
+    </div>
+</footer>
 
 </body>
 </html>

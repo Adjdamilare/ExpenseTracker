@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Expenses</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar-footer :: navbar}"></div>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-wallet me-2"></i>My Expenses</h2>
+        <a th:href="@{/addExpense}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Add New Expense
+        </a>
+    </div>
+
+    <!-- Case 1: Display this block if the 'expenses' list is empty -->
+    <div th:if="${#lists.isEmpty(expenses)}" class="card text-center shadow-sm">
+        <div class="card-body p-5">
+            <h5 class="card-title">No Expenses Yet!</h5>
+            <p class="card-text text-muted">You haven't added any expenses. Get started by adding one.</p>
+            <a th:href="@{/addExpense}" class="btn btn-success mt-3">Add Your First Expense</a>
+        </div>
+    </div>
+
+    <!-- Case 2: Display this block if the 'expenses' list is NOT empty -->
+    <div th:if="${not #lists.isEmpty(expenses)}" class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Tags</th>
+                        <th>Payment Method</th>
+                        <th>Notes</th>
+                        <th class="text-center">Recurring</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Loop through each expense object from the model -->
+                    <tr th:each="expense : ${expenses}">
+                        <td class="text-nowrap" th:text="${#temporals.format(expense.expenseDate, 'dd-MMM-yyyy')}">01-Jan-2024</td>
+                        <td class="fw-bold" th:text="${#numbers.formatCurrency(expense.amount)}">$50.00</td>
+                        <td>
+                            <!-- CORRECTED: Loop through the 'expenseTags' join entity to get to the actual Tag -->
+                            <span th:each="expenseTag : ${expense.expenseTags}"
+                                  th:text="${expenseTag.tag.name}"
+                                  class="badge rounded-pill bg-secondary me-1">
+                                </span>
+                            <!-- CORRECTED: Check if the 'expenseTags' collection is empty -->
+                            <span th:if="${#lists.isEmpty(expense.expenseTags)}" class="text-muted fst-italic">No tags</span>
+                        </td>
+                        <!-- Use safe navigation (?.) in case the method is null -->
+                        <td th:text="${expense.method?.name}">N/A</td>
+                        <td th:text="${expense.notes}"></td>
+                        <td class="text-center">
+                            <!-- Show a green check for recurring expenses, otherwise a gray cross -->
+                            <i th:if="${expense.isRecurring}" class="fas fa-check-circle text-success" title="Recurring"></i>
+                            <i th:unless="${expense.isRecurring}" class="fas fa-times-circle text-muted" title="Not Recurring"></i>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/navbar-footer :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</body>
+</html>

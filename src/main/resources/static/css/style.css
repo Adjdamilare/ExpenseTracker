@@ -1,0 +1,17 @@
+/* src/main/resources/static/css/style.css */
+
+html, body {
+    height: 100%; /* Ensure html and body take up the full viewport height */
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex; /* Make the body a flex container */
+    flex-direction: column; /* Stack children vertically */
+}
+
+/* This class will make the main content area grow and push the footer down */
+.content-wrapper {
+    flex-grow: 1; /* Allow this element to grow and take up available space */
+}

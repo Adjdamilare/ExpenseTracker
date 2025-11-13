@@ -3,6 +3,8 @@ package com.dami.expensetracker.controllers;
 import com.dami.expensetracker.models.Expens;
 import com.dami.expensetracker.models.Tag;
 import com.dami.expensetracker.models.User;
+import com.dami.expensetracker.repositories.ExpenseRepository;
+import com.dami.expensetracker.repositories.UserRepository;
 import com.dami.expensetracker.services.ExpenseService;
 import com.dami.expensetracker.services.PaymentMethodService;
 import com.dami.expensetracker.services.TagService;
@@ -23,13 +25,17 @@ import java.util.List;
 @Controller
 public class ExpenseController {
 
+    private final ExpenseRepository expenseRepository;
+    private final UserRepository userRepository; // You'll need this to get the User object
     private final ExpenseService expenseService;
     private final UserService userService;
     private final PaymentMethodService paymentMethodService;
     private final TagService tagService;
 
     @Autowired
-    public ExpenseController(ExpenseService expenseService, UserService userService, PaymentMethodService paymentMethodService, TagService tagService) {
+    public ExpenseController(ExpenseRepository expenseRepository, UserRepository userRepository, ExpenseService expenseService, UserService userService, PaymentMethodService paymentMethodService, TagService tagService) {
+        this.expenseRepository = expenseRepository;
+        this.userRepository = userRepository;
         this.expenseService = expenseService;
         this.userService = userService;
         this.paymentMethodService = paymentMethodService;
@@ -84,5 +90,30 @@ public class ExpenseController {
         expenseService.save(expense);
 
         return "redirect:/";
+    }
+
+
+
+
+    // ... your existing methods for adding expenses ...
+
+    @GetMapping("/expenses")
+    public String listExpenses(Model model, Principal principal) {
+        // 1. Get the username of the currently logged-in user
+        String username = principal.getName();
+
+        // 2. Find the full User object from the database using the service
+        // This is the corrected line. It properly unwraps the Optional<User>.
+        User currentUser = userService.findByUsername(username)
+                .orElseThrow(() -> new IllegalStateException("Current user not found: " + username));
+
+        // 3. Fetch all expenses for that user using our new repository method
+        List<Expens> userExpenses = expenseRepository.findAllByUserOrderByExpenseDateDesc(currentUser);
+
+        // 4. Add the list of expenses to the model, making it available to Thymeleaf
+        model.addAttribute("expenses", userExpenses);
+
+        // 5. Return the name of the view template
+        return "expenses";
     }
 }

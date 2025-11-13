@@ -4,11 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Manage Tags</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
 </head>
 <body>
-<div th:replace="~{fragments/navbar-footer :: navbar-footer}"></div>
+<div th:replace="~{fragments/navbar-footer :: navbar}"></div>
+<div class="container mt-4 content-wrapper">
 
 <div class="container mt-4">
     <div class="row justify-content-center">
@@ -54,6 +56,8 @@
         </div>
     </div>
 </div>
+</div>
+<div th:replace="~{fragments/navbar-footer :: footer}"></div>
 
 </body>
 </html>

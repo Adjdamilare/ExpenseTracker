@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Expense Tracker - Home</title>
     <!-- Using Bootstrap for styling -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Optional: Using Font Awesome for icons -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
+        /* Styles for Authenticated Dashboard */
         .card-icon {
             font-size: 2.5rem;
             opacity: 0.3;
@@ -29,123 +31,192 @@
         .card-footer-link:hover {
             color: white;
         }
+        /* Style for the public-facing feature icons */
+        .feature-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+            color: #fff;
+            border-radius: .75rem;
+        }
     </style>
 </head>
 <body>
 
-<!-- Assuming you have a navbar fragment -->
-<div th:replace="~{fragments/navbar-footer :: navbar-footer}"></div>
-
-<div class="container mt-4">
-    <div class="p-5 mb-4 bg-light rounded-3">
-        <div class="container-fluid py-5">
-            <h1 class="display-5 fw-bold">Welcome Back!</h1>
-            <p class="col-md-8 fs-4">Here's a quick overview of your financial activity. Manage your expenses, track your income, and stick to your budget.</p>
-
-            <!-- Quick Action Buttons -->
-            <div class="mt-4">
-                <a th:href="@{/addExpense}" class="btn btn-primary btn-lg me-2 mb-2">
-                    <i class="fas fa-plus-circle"></i> Add Expense
-                </a>
-                <a th:href="@{/addIncome}" class="btn btn-success btn-lg me-2 mb-2">
-                    <i class="fas fa-plus-circle"></i> Add Income
-                </a>
-                <a th:href="@{/addBudget}" class="btn btn-info btn-lg me-2 mb-2">
-                    <i class="fas fa-plus-circle"></i> Add Budget
-                </a>
-                <a th:href="@{/addTags}" class="btn btn-secondary btn-lg mb-2">
-                    <i class="fas fa-tags"></i> Add Tag
-                </a>
+<!-- The navbar is now in a fragment -->
+<div th:replace="~{fragments/navbar-footer :: navbar}"></div>
+<div class="container mt-4 content-wrapper">
+<!-- ================================================================== -->
+<!-- VIEW FOR ANONYMOUS (NOT LOGGED IN) USERS                          -->
+<!-- ================================================================== -->
+<main sec:authorize="isAnonymous()">
+    <!-- Hero Section -->
+    <div class="px-4 py-5 my-5 text-center">
+        <i class="fas fa-wallet fa-3x text-primary mb-4"></i>
+        <h1 class="display-5 fw-bold">Take Control of Your Finances</h1>
+        <div class="col-lg-6 mx-auto">
+            <p class="lead mb-4">Expense Tracker is a simple, intuitive tool to help you monitor your spending, manage income, and stick to your budgets. Get a clear view of your financial health today.</p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a th:href="@{/signup}" class="btn btn-primary btn-lg px-4 gap-3">Sign Up for Free</a>
+                <a th:href="@{/login}" class="btn btn-outline-secondary btn-lg px-4">Login</a>
             </div>
         </div>
     </div>
 
-    <!-- Dashboard Summary Cards -->
-    <div class="row">
-        <!-- Total Expenses Card -->
-        <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card text-white bg-danger h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title">Total Expenses</h5>
-                            <p class="card-value" th:text="${expenseCount}">0</p>
-                        </div>
-                        <div class="card-icon">
-                            <i class="fa-solid fa-arrow-down"></i>
-                        </div>
-                    </div>
+    <!-- Features Section -->
+    <div class="container px-4 py-5" id="features">
+        <h2 class="pb-2 border-bottom text-center">Why Use Expense Tracker?</h2>
+        <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+            <div class="col d-flex align-items-start">
+                <div class="feature-icon bg-primary bg-gradient">
+                    <i class="fas fa-receipt"></i>
                 </div>
-                <a th:href="@{/expenses}" class="card-footer card-footer-link">
-                    View Details <i class="fas fa-arrow-circle-right"></i>
-                </a>
+                <div>
+                    <h4 class="fw-bold mb-0">Track Expenses</h4>
+                    <p>Easily log every purchase and categorize your spending to see where your money goes.</p>
+                </div>
             </div>
-        </div>
-
-        <!-- Total Tags Card -->
-        <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card text-white bg-primary h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title">Total Tags</h5>
-                            <p class="card-value" th:text="${tagCount}">0</p>
-                        </div>
-                        <div class="card-icon">
-                            <i class="fa-solid fa-tags"></i>
-                        </div>
-                    </div>
+            <div class="col d-flex align-items-start">
+                <div class="feature-icon bg-success bg-gradient">
+                    <i class="fas fa-bullseye"></i>
                 </div>
-                <a th:href="@{/tags}" class="card-footer card-footer-link">
-                    View Details <i class="fas fa-arrow-circle-right"></i>
-                </a>
+                <div>
+                    <h4 class="fw-bold mb-0">Set Budgets</h4>
+                    <p>Create monthly or weekly budgets for different categories and get alerts when you're close to your limit.</p>
+                </div>
             </div>
-        </div>
-
-        <!-- Current Budget Card (Refactored) -->
-        <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card text-white bg-success h-100">
-                <div class="card-body">
-                    <!-- Use th:block for cleaner conditional rendering -->
-                    <th:block th:if="${currentBudget}">
-                        <!-- FIX: Access the name via the associated tag -->
-                        <h5 class="card-title" th:text="${currentBudget.tag.name}">Current Budget</h5>
-                        <p class="card-value" th:text="${'$' + #numbers.formatDecimal(currentBudget.amount, 1, 'COMMA', 2, 'POINT')}">$0.00</p>
-                    </th:block>
-                    <th:block th:unless="${currentBudget}">
-                        <h5 class="card-title">Current Budget</h5>
-                        <p class="card-value">N/A</p>
-                        <p class="mb-0 small">No active budget found.</p>
-                    </th:block>
+            <div class="col d-flex align-items-start">
+                <div class="feature-icon bg-warning bg-gradient">
+                    <i class="fas fa-chart-pie"></i>
                 </div>
-                <a th:href="@{/budgets}" class="card-footer card-footer-link">
-                    Manage Budgets <i class="fas fa-arrow-circle-right"></i>
-                </a>
-            </div>
-        </div>
-
-        <!-- Recent Income Card (Refactored) -->
-        <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card text-white bg-warning h-100">
-                <div class="card-body">
-                    <th:block th:if="${recentIncome}">
-                        <h5 class="card-title">Recent Income</h5>
-                        <p class="card-value" th:text="${'$' + #numbers.formatDecimal(recentIncome.amount, 1, 'COMMA', 2, 'POINT')}">$0.00</p>
-                        <p class="mb-0 small" th:text="${'From: ' + recentIncome.source}">From: Source</p>
-                    </th:block>
-                    <th:block th:unless="${recentIncome}">
-                        <h5 class="card-title">Recent Income</h5>
-                        <p class="card-value">N/A</p>
-                        <p class="mb-0 small">No income recorded yet.</p>
-                    </th:block>
+                <div>
+                    <h4 class="fw-bold mb-0">Visualize Data</h4>
+                    <p>Understand your financial habits with insightful charts and reports that make data easy to digest.</p>
                 </div>
-                <a th:href="@{/incomes}" class="card-footer card-footer-link">
-                    Manage Incomes <i class="fas fa-arrow-circle-right"></i>
-                </a>
             </div>
         </div>
     </div>
+</main>
+
+<!-- ================================================================== -->
+<!-- VIEW FOR AUTHENTICATED (LOGGED IN) USERS                           -->
+<!-- ================================================================== -->
+<main sec:authorize="isAuthenticated()">
+    <div class="container mt-4">
+        <div class="p-5 mb-4 bg-light rounded-3">
+            <div class="container-fluid py-5">
+                <h1 class="display-5 fw-bold">Welcome Back, <span sec:authentication="name">User</span>!</h1>
+                <p class="col-md-8 fs-4">Here's a quick overview of your financial activity. Manage your expenses, track your income, and stick to your budget.</p>
+
+                <!-- Quick Action Buttons -->
+                <div class="mt-4">
+                    <a th:href="@{/addExpense}" class="btn btn-primary btn-lg me-2 mb-2">
+                        <i class="fas fa-plus-circle"></i> Add Expense
+                    </a>
+                    <a th:href="@{/addIncome}" class="btn btn-success btn-lg me-2 mb-2">
+                        <i class="fas fa-plus-circle"></i> Add Income
+                    </a>
+                    <a th:href="@{/addBudget}" class="btn btn-info btn-lg me-2 mb-2">
+                        <i class="fas fa-plus-circle"></i> Add Budget
+                    </a>
+                    <a th:href="@{/addTags}" class="btn btn-secondary btn-lg mb-2">
+                        <i class="fas fa-tags"></i> Add Tag
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Summary Cards -->
+        <div class="row">
+            <!-- Total Expenses Card -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card text-white bg-danger h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title">Your Expenses</h5>
+                                <p class="card-value" th:text="${expenseCount}">0</p>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fa-solid fa-arrow-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <a th:href="@{/expenses}" class="card-footer card-footer-link">
+                        View Details <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Total Tags Card -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card text-white bg-primary h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title">Your Tags</h5>
+                                <p class="card-value" th:text="${tagCount}">0</p>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fa-solid fa-tags"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <a th:href="@{/tags}" class="card-footer card-footer-link">
+                        View Details <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Budgets Card -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card text-white bg-success h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title">Your Budgets</h5>
+                                <p>Manage and track your spending goals.</p>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fa-solid fa-bullseye"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <a th:href="@{/budgets}" class="card-footer card-footer-link">
+                        Manage Budgets <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Incomes Card -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card text-white bg-warning h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title">Your Incomes</h5>
+                                <p>View and record your sources of income.</p>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fa-solid fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <a th:href="@{/incomes}" class="card-footer card-footer-link">
+                        Manage Incomes <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 </div>
+<!-- The footer is now in a fragment -->
+<div th:replace="~{fragments/navbar-footer :: footer}"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

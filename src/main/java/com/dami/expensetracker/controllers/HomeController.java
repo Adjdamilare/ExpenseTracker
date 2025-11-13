@@ -41,10 +41,10 @@ public class HomeController {
         long tagCount = tagRepository.count();
 
         // 3. Find the current ongoing budget using the new repository method
-        Optional<Budget> currentBudgetOpt = budgetRepository.findCurrentBudget(LocalDate.now());
+        Optional<Budget> currentBudgetOpt = Optional.empty();
 
         // 4. Find the most recent income using the new repository method
-        Optional<Income> recentIncomeOpt = incomeRepository.findTopByOrderByIncomeDateDesc();
+        Optional<Income> recentIncomeOpt = Optional.empty();
 
         // Add all the fetched data to the model for the view to use
         model.addAttribute("expenseCount", expenseCount);

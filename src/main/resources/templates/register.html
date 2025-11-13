@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-<div th:replace="fragments/navbar-footer :: navbar"></div>
+<div th:replace="~{fragments/navbar-footer :: navbar}"></div>
+<div class="container mt-4 content-wrapper">
 
 <div class="registration-container">
     <div class="registration-card">
@@ -77,8 +78,8 @@
         </div>
     </div>
 </div>
-
-<div th:replace="fragments/navbar-footer :: footer"></div>
+</div>
+<div th:replace="~{fragments/navbar-footer :: footer}"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous"></script>
 <script>

@@ -109,4 +109,21 @@ public class BudgetController {
 
         return "redirect:/";
     }
+
+    @GetMapping("/budgets")
+    public String listBudgets(Model model, Principal principal) {
+        // 1. Get the currently logged-in user
+        String username = principal.getName();
+        User currentUser = userService.findByUsername(username)
+                .orElseThrow(() -> new IllegalStateException("Current user not found: " + username));
+
+        // 2. Fetch all budgets for that user (assuming a findByUser method in your service)
+        List<Budget> userBudgets = budgetService.findByUser(currentUser);
+
+        // 3. Add the list of budgets to the model for Thymeleaf
+        model.addAttribute("budgets", userBudgets);
+
+        // 4. Return the name of the view template
+        return "budgets";
+    }
 }
