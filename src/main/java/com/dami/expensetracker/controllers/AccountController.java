@@ -25,7 +25,7 @@ public class AccountController {
     /**
      * Constructs a new AccountController with the required UserRepository.
      *
-     * @param UserRepository the repository to be injected for user data access
+    // * @param  repository to be injected for user data access
      */
     @Autowired // 3. Inject the repository via the constructor
     public AccountController(UserRepository userRepository) {

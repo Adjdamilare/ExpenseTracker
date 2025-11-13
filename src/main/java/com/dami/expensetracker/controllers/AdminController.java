@@ -53,7 +53,7 @@ public class AdminController {
 
     /**
      * Displays the admin dashboard with various platform metrics and data visualizations
-     * @param Model model to be populated with dashboard data
+     * @param model to be populated with dashboard data
      * @return String representing the view name for the admin dashboard
      */
     @GetMapping("/admin")
